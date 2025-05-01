@@ -1,0 +1,643 @@
+openapi: 3.0.4
+info:
+  title: Medical System - OpenAPI 3.0
+  description: |-
+    Medical System API to manage doctor and appointments data.
+  contact:
+    email: ivan.gavrish.znu@gmail.com
+  version: 1.0.0
+servers:
+  - url: https://medical-system.test/api/v1
+tags:
+  - name: doctors
+    description: Manage data about doctors
+    externalDocs:
+      description: Find out more
+      url: https://swagger.io
+  - name: appointments
+    description: Manage data about appointments
+    externalDocs:
+      description: Find out more about our store
+      url: https://swagger.io
+paths:
+  /doctors:
+    get:
+      tags:
+        - doctors
+      summary: Get a list of doctors
+      description: Returns a list of doctors with filtering options
+      operationId: getAllDoctors
+      parameters:
+        - name: specialty
+          in: query
+          description: Filter doctors by specialty
+          required: false
+          schema:
+            type: string
+        - name: available
+          in: query
+          description: Filter by doctor availability
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Doctor'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - doctors
+      summary: Add a new doctor
+      description: Creates a new doctor record in the system
+      operationId: addDoctor
+      requestBody:
+        description: Doctor information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorInput'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Doctor'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /doctors/{doctorId}:
+    get:
+      tags:
+        - doctors
+      summary: Get a doctor record by ID
+      description: Returns a specific doctor's information
+      operationId: getDoctorById
+      parameters:
+        - name: doctorId
+          in: path
+          description: ID of the doctor to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Doctor'
+        '404':
+          description: Doctor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - doctors
+      summary: Update doctor's information
+      description: Updates an existing doctor's information
+      operationId: updateDoctor
+      parameters:
+        - name: doctorId
+          in: path
+          description: ID of the doctor to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated doctor information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorInput'
+      responses:
+        '200':
+          description: Doctor updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Doctor'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - doctors
+      summary: Delete a doctor
+      description: Removes a doctor record from the system
+      operationId: deleteDoctor
+      parameters:
+        - name: doctorId
+          in: path
+          description: ID of the doctor to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Doctor deleted successfully
+        '404':
+          description: Doctor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /doctors/{doctorId}/availability:
+    get:
+      tags:
+        - doctors
+      summary: Get doctor's availability
+      description: Returns a doctor's available time slots
+      operationId: getDoctorAvailability
+      parameters:
+        - name: doctorId
+          in: path
+          description: ID of the doctor
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  doctorId:
+                    type: integer
+                    format: int64
+                  availability:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Availability'
+        '404':
+          description: Doctor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - doctors
+      summary: Update doctor's availability
+      description: Updates a doctor's available time slots
+      operationId: updateDoctorAvailability
+      parameters:
+        - name: doctorId
+          in: path
+          description: ID of the doctor
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Availability information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                availability:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Availability'
+              required:
+                - availability
+      responses:
+        '200':
+          description: Availability updated successfully
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /appointments:
+    get:
+      tags:
+        - appointments
+      summary: Get list of appointments
+      description: Returns a list of appointments with filtering options
+      operationId: getAppointments
+      parameters:
+        - name: doctorId
+          in: query
+          description: Filter by doctor ID
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: patientId
+          in: query
+          description: Filter by patient ID
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: status
+          in: query
+          description: Filter by appointment status
+          required: false
+          schema:
+            type: string
+            enum: [scheduled, in_progress, completed, cancelled]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - appointments
+      summary: Create a new appointment
+      description: Schedules a new appointment
+      operationId: createAppointment
+      requestBody:
+        description: Appointment information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentInput'
+      responses:
+        '200':
+          description: Appointment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Doctor or patient not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /appointments/{appointmentId}:
+    get:
+      tags:
+        - appointments
+      summary: Get appointment by ID
+      description: Returns a specific appointment's information
+      operationId: getAppointmentById
+      parameters:
+        - name: appointmentId
+          in: path
+          description: ID of the appointment to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '404':
+          description: Appointment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - appointments
+      summary: Update appointment
+      description: Updates an existing appointment
+      operationId: updateAppointment
+      parameters:
+        - name: appointmentId
+          in: path
+          description: ID of the appointment to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated appointment information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentInput'
+      responses:
+        '200':
+          description: Appointment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Appointment, doctor, or patient not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - appointments
+      summary: Cancel an appointment
+      description: Cancels an existing appointment
+      operationId: cancelAppointment
+      parameters:
+        - name: appointmentId
+          in: path
+          description: ID of the appointment to cancel
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: reason
+          in: query
+          description: Reason for cancellation
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Appointment cancelled successfully
+        '404':
+          description: Appointment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Doctor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Doctor's ID
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        specialty:
+          type: string
+          description: Medical specialty
+        licenseNumber:
+          type: string
+          description: Medical license number
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the doctor was added to the system
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the doctor information was last updated
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - specialty
+        - licenseNumber
+        - createdAt
+        - updatedAt
+    
+    DoctorInput:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        specialty:
+          type: string
+        licenseNumber:
+          type: string
+      required:
+        - firstName
+        - lastName
+        - email
+        - specialty
+        - licenseNumber
+    
+    Availability:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: Date available (DD-MM-YYYY)
+        slots:
+          type: array
+          items:
+            type: object
+            properties:
+              startTime:
+                type: string
+                format: time
+                description: Slot start time (HH:MM)
+              endTime:
+                type: string
+                format: time
+                description: Slot end time (HH:MM)
+            required:
+              - startTime
+              - endTime
+      required:
+        - date
+        - slots
+    
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        doctorId:
+          type: integer
+          format: int64
+        patientId:
+          type: integer
+          format: int64
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [scheduled, in_progress, completed, cancelled]
+        type:
+          type: string
+          description: Type of appointment (e.g., emergency, regular)
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        cancellationReason:
+          type: string
+      required:
+        - id
+        - doctorId
+        - patientId
+        - startTime
+        - endTime
+        - status
+        - type
+        - createdAt
+        - updatedAt
+    
+    AppointmentInput:
+      type: object
+      properties:
+        doctorId:
+          type: string
+        patientId:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        type:
+          type: string
+        notes:
+          type: string
+      required:
+        - doctorId
+        - patientId
+        - startTime
+        - endTime
+        - type
+    
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+      required:
+        - code
+        - message
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
