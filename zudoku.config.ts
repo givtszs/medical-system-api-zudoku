@@ -4,7 +4,8 @@ const config: ZudokuConfig = {
   topNavigation: [
     { id: "docs", label: "Documentation" },
     { id: "api", label: "API Reference" },
-    { id: "docs/about", label: "About" }
+    { id: "docs/about", label: "About" },
+    { id: "docs/SRS", label: "SRS" }
   ],
   sidebar: {
     docs: [

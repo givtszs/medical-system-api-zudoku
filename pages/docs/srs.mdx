@@ -1,0 +1,116 @@
+---
+title: Software Requirement Specification
+---
+
+## General description
+
+The VR Platform is a web-based application designed to allow users to create, share, and experience virtual reality tours. The platform enables the creation of immersive experiences without requiring specialized knowledge in VR development and modeling.
+
+The platform will provide tools for creating VR tours from 360° photos, adding interactive and media elements, setting up tour endpoints, organizing tour scenes, and sharing these tours with others. It will support viewing experiences across web browsers, VR headsets, and mobile devices.
+
+### User roles
+
+The platform will utilize roles to separate access for different parts of the system.
+
+1. Viewers: General users who can browse and view published VR tours.
+2. Creators: Individual users or organizations that can create, edit and publish VR tours.
+3. Administrators: User with full access to all parts of the system who controls the platform's operation.
+
+## UI requirements
+
+### Admin Tour Dashboard
+
+- Drag-and-drop editor for arranging tour scenes
+- Tour preview functionality
+- Publishing and sharing of tours
+
+### Admin Tour Editor
+
+- Media uploader for 360° photos and other media components, such as images, videos, audios, text
+- Hotspots for navigation between scenes
+- Settings controller for scene components
+
+### Admin Dashboard
+
+- User management
+- Content moderation
+- System monitoring (statistics about created tours, published tours, etc.)
+- Analytics dashboard
+
+### Public Tour Dashboard
+
+- List of published tours
+- Search and filtering functionality
+- Pagination
+
+### Tour Viewer
+
+- Tour navigation controls (movement, rotation, interaction)
+- Information overlay system
+- Tour progress tracking
+- Sharing and feedback features (e.g., rating)
+
+## Functional requirements
+
+### General actions
+
+Users shoud be able to:
+
+- browse the most popular tours
+- browse all published tours
+- use searching and filtering options to find specific tours
+- view individual tours
+- leave feedback on tours
+
+### Administration
+
+Administrators should be able to:
+- manage registered user accounts
+- manage new user applications and and them to the system
+- manage all created tours in the system
+- manage organizations
+- view platform analytics
+
+### Tour Management
+
+Users should be able to:
+- create, edit and delete tours
+- save tours as drafts
+- publish/unpublish completed tours
+- organize tours into collections
+- create, edit and delete tour scenes
+
+### Tour Editor
+
+Users should be able to:
+- create scenes from uploaded 360° photos
+- add hotspots to navigate between tour scenes
+- upload media elements, such as images, videos, audios
+- add text annotations to specific viewpoints
+- add interactive hotspots that trigger actions (e.g., opening an informational modal)
+- arrange added elements in the scene
+
+### Tour Viewer
+
+Viewers should be able to:
+- navigate between scenes in the tour
+- interact with hotspots and elements
+- pause, resume, and restart tours
+- share tours via link
+
+## Non-Functional Requirements
+
+- Media processing should complete within 2 minutes for standard-sized files
+- Authentication should use industry-standard protocols
+
+The platform should:
+- support simultaneous access by at least 1000 concurrent users
+- implement protection against common web vulnerabilities
+- have 99.9% uptime
+- support increasing user base without performance degradation
+- support adding new media types and formats as they emerge
+- support at least 2 languages (Ukrainian, English)
+- provide responsive design for various screen sizes
+- function on the latest versions of Chrome, Firefox, Safari, and Edge
+- support all WebXR-compatible VR headsets
+- provide functional experience on non-VR devices
